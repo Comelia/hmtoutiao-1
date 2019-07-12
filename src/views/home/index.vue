@@ -1,9 +1,11 @@
 <template>
   <el-container class="my-con">
     <!-- 侧边栏 -->
-    <el-aside width="200px" class="my-sidebar">
-      <div class="logo"></div>
+    <el-aside :width="isCollapse? '60px': '200px'" class="my-sidebar">
+      <div class="logo" :class="{'m-logo':isCollapse }"></div>
       <el-menu
+        :collapse="isCollapse"
+        :collapse-transition='false'
         style="border-right: 0px"
         default-active="1"
         class="el-menu-vertical-demo"
@@ -44,7 +46,7 @@
     <el-container>
       <!-- 导航栏 -->
       <el-header class="my-header">
-        <span class="el-icon-s-fold" style="font-size:28px;vertical-align: middle;"></span>
+        <span class="el-icon-s-fold" @click="close" style="font-size:28px;vertical-align: middle;"></span>
         <span class="text">江苏传智播客科技教育有限公司</span>
         <!-- 下拉菜单 -->
         <el-dropdown style="float:right">
@@ -64,13 +66,26 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
-      <el-main>Main</el-main>
+      <el-main class="my-main">
+
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {
+      isCollapse: false
+    }
+  },
+  methods: {
+    close () {
+      this.isCollapse = !this.isCollapse
+    }
+  }
+}
 </script>
 
 <style scoped lang="less">
@@ -84,8 +99,11 @@ export default {}
     background: #002033;
     .logo {
       height: 60px;
-      background: #024 url(../../assets/images/logo_admin.png) no-repeat center /
-        140px auto;
+      background: #024 url(../../assets/images/logo_admin.png) no-repeat center / 140px auto;
+    }
+    .m-logo {
+      background-image: url(../../assets/images/logo_admin_01.png);
+      background-size: 36px auto;
     }
   }
   .my-header {
@@ -94,6 +112,9 @@ export default {}
       margin-left: 6px;
       vertical-align: middle;
     }
+  }
+  .my-main {
+    background: url(../../assets/images/welcome.jpg) no-repeat center;
   }
 }
 </style>
