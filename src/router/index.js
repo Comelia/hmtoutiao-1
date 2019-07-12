@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/login'
 
+// test
 Vue.use(VueRouter)
 
 const router = new VueRouter({
