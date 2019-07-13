@@ -4,40 +4,41 @@
     <el-aside :width="isCollapse? '60px': '200px'" class="my-sidebar">
       <div class="logo" :class="{'m-logo':isCollapse }"></div>
       <el-menu
+        router
         :collapse="isCollapse"
         :collapse-transition='false'
         style="border-right: 0px"
-        default-active="1"
+        default-active="/"
         class="el-menu-vertical-demo"
         background-color="#002033"
         text-color="#fff"
         active-text-color="#ffd04b"
       >
-        <el-menu-item index="1">
+        <el-menu-item index="/">
           <i class="el-icon-s-home"></i>
           <span slot="title">首页</span>
         </el-menu-item>
-        <el-menu-item index="2">
+        <el-menu-item index="/article">
           <i class="el-icon-document"></i>
           <span slot="title">内容管理</span>
         </el-menu-item>
-        <el-menu-item index="3">
+        <el-menu-item index="/image">
           <i class="el-icon-picture"></i>
           <span slot="title">素材管理</span>
         </el-menu-item>
-        <el-menu-item index="4">
+        <el-menu-item index="/publish">
           <i class="el-icon-edit-outline"></i>
           <span slot="title">发布文章</span>
         </el-menu-item>
-        <el-menu-item index="5">
+        <el-menu-item index="/comment">
           <i class="el-icon-s-comment"></i>
           <span slot="title">评论管理</span>
         </el-menu-item>
-        <el-menu-item index="6">
+        <el-menu-item index="/fans">
           <i class="el-icon-star-off"></i>
           <span slot="title">粉丝管理</span>
         </el-menu-item>
-        <el-menu-item index="7">
+        <el-menu-item index="/setting">
           <i class="el-icon-s-tools"></i>
           <span slot="title">个人设置</span>
         </el-menu-item>
@@ -66,8 +67,9 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
-      <el-main class="my-main">
-
+      <el-main>
+        <!-- 二级路由 -->
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -112,9 +114,6 @@ export default {
       margin-left: 6px;
       vertical-align: middle;
     }
-  }
-  .my-main {
-    background: url(../../assets/images/welcome.jpg) no-repeat center;
   }
 }
 </style>

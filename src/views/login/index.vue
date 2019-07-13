@@ -9,10 +9,10 @@
         <!-- 表单每一项的容器 -->
         <el-form-item prop="mobile">
           <!-- 表单元素 -->
-          <el-input class="phone" v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
+          <el-input class="phone" v-model="loginForm.mobile"  ></el-input>
         </el-form-item>
         <el-form-item  prop="code">
-          <el-input class="yzm" v-model="loginForm.code"></el-input>
+          <el-input class="yzm" v-model="loginForm.code" placeholder="请输入验证码"></el-input>
           <el-button class="btn" plain>发送验证码</el-button>
         </el-form-item>
         <el-form-item>
@@ -43,8 +43,8 @@ export default {
     }
     return {
       loginForm: {
-        mobile: '',
-        code: ''
+        mobile: '13911111111',
+        code: '246810'
       },
       loginRules: {
         mobile: [
@@ -68,8 +68,15 @@ export default {
             .post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm)
             .then(res => {
               if (res.status === 201) {
+                // 1.如果登录成功 跳转路由到'/'
+                // 2.保存 token
                 this.$router.push('/')
+                window.sessionStorage.setItem('hm1-toutiao', JSON.stringify(res.data.data))
               }
+            })
+            .catch(() => {
+              // 提示
+              this.$message.error('手机号或验证码错误')
             })
         }
       })
