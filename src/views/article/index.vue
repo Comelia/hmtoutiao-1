@@ -47,15 +47,30 @@
     <el-card>
       <div slot="header">根据筛选条件同查询到 {{ total }} 条结果:</div>
       <el-table :data="articles" style="width: 100%">
-        <el-table-column prop="date" label="封面" width="180">
+        <el-table-column prop="date" label="封面">
+          <!-- 自定义列模板 -->
           <template slot-scope="scope">
-            <el-image :src="scope.row.cover.images[0]"></el-image>
+            <img :src="scope.row.cover.images[0]" style="width:150px;height:120px" />
           </template>
         </el-table-column>
-        <el-table-column prop="date" label="标题" width="180"></el-table-column>
-        <el-table-column prop="date" label="状态" width="180"></el-table-column>
-        <el-table-column prop="date" label="发布时间" width="180"></el-table-column>
-        <el-table-column prop="date" label="操作" width="180"></el-table-column>
+        <el-table-column prop="title" label="标题">
+        </el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status===0" type="info">草稿</el-tag>
+            <el-tag v-if="scope.row.status===1">待审核</el-tag>
+            <el-tag v-if="scope.row.status === 2"  type="success">审核通过</el-tag>
+            <el-tag v-if="scope.row.status === 3" type="warning">审核失败</el-tag>
+            <el-tag v-if="scope.row.status === 4"  type="danger">已删除</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="pubdate" label="发布时间"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="">
+            <el-button icon="el-icon-edit" type="primary"></el-button>
+            <el-button icon="el-icon-delete" type="danger"></el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="box">
         <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
@@ -83,6 +98,18 @@ export default {
       total: 0,
       // 文章列表数据
       articles: []
+    }
+  },
+  created () {
+    // 页面加载完成 先获取所有数据
+    this.getArticles()
+  },
+  methods: {
+    // 获取文件列表数据
+    async getArticles () {
+      const { data: { data } } = await this.$http.get('articles')
+      console.log(data)
+      this.articles = data.results
     }
   }
 }
