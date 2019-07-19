@@ -29,6 +29,8 @@
         <el-form-item label="日期：">
           <div class="block">
             <el-date-picker
+              value-format="yyyy-MM-dd"
+              @change="changeDate"
               size="small"
               v-model="dataOptions"
               type="daterange"
@@ -39,7 +41,7 @@
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary">筛选</el-button>
+          <el-button size="small" @click="search()" type="primary">筛选</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -65,10 +67,10 @@
           </template>
         </el-table-column>
         <el-table-column prop="pubdate" label="发布时间"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="180px">
           <template slot-scope="">
-            <el-button icon="el-icon-edit" type="primary"></el-button>
-            <el-button icon="el-icon-delete" type="danger"></el-button>
+            <el-button icon="el-icon-edit" plain circle type="primary"></el-button>
+            <el-button icon="el-icon-delete" plain circle type="danger"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -103,11 +105,27 @@ export default {
   created () {
     // 页面加载完成 先获取所有数据
     this.getArticles()
+    // 获取频道数据
+    this.getChannelOptions()
   },
   methods: {
+    // 获取频道数据
+    async getChannelOptions () {
+      const { data: { data } } = await this.$http.get('channels')
+      this.channelOptions = data.channels
+    },
+    // 搜索
+    search () {
+      this.getArticles()
+    },
+    // 选择时间处理函数
+    changeDate (values) {
+      this.reqPramas.begin_pubdate = values[0]
+      this.reqPramas.end_pubdate = values[1]
+    },
     // 获取文件列表数据
     async getArticles () {
-      const { data: { data } } = await this.$http.get('articles')
+      const { data: { data } } = await this.$http.get('articles', { params: this.reqPramas })
       console.log(data)
       this.articles = data.results
     }
