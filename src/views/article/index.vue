@@ -17,14 +17,7 @@
         </el-form-item>
         <el-form-item label="频道名称：">
           <!-- 频道组件 -->
-          <el-select size="small" v-model="reqPramas.channel_id" placeholder="请选择">
-            <el-option
-              v-for="item in channelOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+        <my-channel v-model="reqPramas.channel_id"></my-channel>
         </el-form-item>
         <el-form-item label="日期：">
           <div class="block">
@@ -47,7 +40,7 @@
     </el-card>
     <!-- 筛选结果 -->
     <el-card>
-      <div slot="header">根据筛选条件同查询到 <b>{{ total }}</b> 条结果:</div>
+      <div slot="header">根据筛选条件共查询到 <b>{{ total }}</b> 条结果:</div>
       <el-table :data="articles" style="width: 100%">
         <el-table-column prop="date" label="封面">
           <!-- 自定义列模板 -->
@@ -68,9 +61,9 @@
         </el-table-column>
         <el-table-column prop="pubdate" label="发布时间"></el-table-column>
         <el-table-column label="操作" width="180px">
-          <template slot-scope="">
-            <el-button icon="el-icon-edit" plain circle type="primary"></el-button>
-            <el-button icon="el-icon-delete" plain circle type="danger"></el-button>
+          <template slot-scope="scope">
+            <el-button icon="el-icon-edit" @click="edit(scope.row.id)" plain circle type="primary"></el-button>
+            <el-button icon="el-icon-delete" @click="del(scope.row.id)" plain circle type="danger"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -105,8 +98,6 @@ export default {
         begin_pubdate: null,
         end_pubdate: null
       },
-      // 频道数据
-      channelOptions: [{ name: 'java', id: 1 }],
       // 日期数据
       dataOptions: [],
       // 总条数
@@ -118,20 +109,33 @@ export default {
   created () {
     // 页面加载完成 先获取所有数据
     this.getArticles()
-    // 获取频道数据
-    this.getChannelOptions()
   },
   methods: {
+    // 删除
+    del (id) {
+      this.$confirm('此操作将永久删除该文章, 是否继续?', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await this.$http.delete(`articles/${id}`)
+          // 删除成功  如果删除失败是不会执行下面两句代码
+          this.$message('删除成功')
+          // 更新列表
+          this.getArticles()
+        })
+        .catch(() => {})
+    },
+    // 编辑
+    edit (id) {
+      this.$router.push('/publish?id=' + id)
+    },
     // 分页  默认有一个参数 改变的页码
     pager (newPage) {
       // 提交当前页码给后台 才能获取对应的数据
       this.reqPramas.page = newPage
       this.getArticles()
-    },
-    // 获取频道数据
-    async getChannelOptions () {
-      const { data: { data } } = await this.$http.get('channels')
-      this.channelOptions = data.channels
     },
     // 搜索
     search () {
@@ -146,7 +150,7 @@ export default {
     // 获取文件列表数据
     async getArticles () {
       const { data: { data } } = await this.$http.get('articles', { params: this.reqPramas })
-      // console.log(data)
+      console.log(data)
       this.articles = data.results
       // 获取总条数
       this.total = data.total_count
