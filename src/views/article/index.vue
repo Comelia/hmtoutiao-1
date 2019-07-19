@@ -47,7 +47,7 @@
     </el-card>
     <!-- 筛选结果 -->
     <el-card>
-      <div slot="header">根据筛选条件同查询到 {{ total }} 条结果:</div>
+      <div slot="header">根据筛选条件同查询到 <b>{{ total }}</b> 条结果:</div>
       <el-table :data="articles" style="width: 100%">
         <el-table-column prop="date" label="封面">
           <!-- 自定义列模板 -->
@@ -75,7 +75,18 @@
         </el-table-column>
       </el-table>
       <div class="box">
-        <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+        <!-- @current-change="pager"  改变页面触发的事件
+          :current-page="reqPramas.page"  当前页码
+          :page-size="reqPramas.per_page"  每一页多少条
+          :total 一共多少条-->
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          @current-change="pager"
+          :current-page="reqPramas.page"
+          :page-size="reqPramas.per_page"
+          :total="total">
+        </el-pagination>
       </div>
     </el-card>
   </div>
@@ -87,6 +98,8 @@ export default {
     return {
       // 发送请求准备的数据
       reqPramas: {
+        page: 1,
+        per_page: 20,
         status: null,
         channel_id: null,
         begin_pubdate: null,
@@ -109,6 +122,12 @@ export default {
     this.getChannelOptions()
   },
   methods: {
+    // 分页  默认有一个参数 改变的页码
+    pager (newPage) {
+      // 提交当前页码给后台 才能获取对应的数据
+      this.reqPramas.page = newPage
+      this.getArticles()
+    },
     // 获取频道数据
     async getChannelOptions () {
       const { data: { data } } = await this.$http.get('channels')
@@ -116,6 +135,7 @@ export default {
     },
     // 搜索
     search () {
+      this.reqPramas.page = 1
       this.getArticles()
     },
     // 选择时间处理函数
@@ -126,8 +146,10 @@ export default {
     // 获取文件列表数据
     async getArticles () {
       const { data: { data } } = await this.$http.get('articles', { params: this.reqPramas })
-      console.log(data)
+      // console.log(data)
       this.articles = data.results
+      // 获取总条数
+      this.total = data.total_count
     }
   }
 }
