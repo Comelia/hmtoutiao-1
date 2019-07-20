@@ -5,6 +5,7 @@ import Home from '../views/home'
 import welcome from '../views/welcome'
 import NotFound from '../views/404'
 import Article from '../views/article'
+import Image from '../views/image'
 
 Vue.use(VueRouter)
 
@@ -17,7 +18,8 @@ const router = new VueRouter({
       children: [
         // 欢迎页
         { name: 'welcome', path: '/', component: welcome },
-        { name: 'article', path: '/article', component: Article }
+        { name: 'article', path: '/article', component: Article },
+        { name: 'image', path: '/image', component: Image }
       ] },
     { name: '404', path: '*', component: NotFound }
   ]

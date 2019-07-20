@@ -53,17 +53,20 @@
         <el-dropdown style="float:right">
           <span class="el-dropdown-link">
             <img
-              src="../../assets/images/avatar.jpg"
+              :src="pic"
               width="42px"
               style="vertical-align:middle;margin-right:6px;"
               alt
             />
-            <span style="vertical-align:middle">hm-xiaohei</span>
+            {{ name }}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-setting">个人设置</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-unlock">退出登录</el-dropdown-item>
+            <!-- 使用的是click事件 dom的原生事件 -->
+            <!-- 组件解析过后 这个标签是不存在 事件绑定无效 -->
+            <!-- 事件修饰符 .native 绑定原生的事件-->
+            <el-dropdown-item @click.native="setting()" icon="el-icon-setting">个人设置</el-dropdown-item>
+            <el-dropdown-item @click.native="logout()" icon="el-icon-unlock">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
@@ -79,13 +82,30 @@
 export default {
   data () {
     return {
-      isCollapse: false
+      isCollapse: false,
+      name: '',
+      pic: ''
     }
   },
   methods: {
     close () {
       this.isCollapse = !this.isCollapse
+    },
+    // 个人设置
+    setting () {
+      this.$router.push('/setting')
+    },
+    logout () {
+      // 清除sessionStorage中的hm1-toutiao
+      window.sessionStorage.removeItem('hm1-toutiao')
+      this.$router.push('/login')
     }
+  },
+  created () {
+    // 显示个人信息
+    const user = JSON.parse(window.sessionStorage.getItem('hm1-toutiao'))
+    this.name = user.name
+    this.pic = user.photo
   }
 }
 </script>
